@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Herita — Your Legacy, Protected</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: #08080f; color: #e2ddd6; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; }
+    textarea { resize: vertical; font-family: inherit; }
+    button { font-family: inherit; cursor: pointer; transition: opacity 0.15s; }
+    button:hover { opacity: 0.82; }
+    input, select, textarea { outline: none; font-family: inherit; }
+    input:focus, select:focus, textarea:focus { border-color: #c9b99a88 !important; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #222235; border-radius: 4px; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── NAV ── */
+    #app { min-height: 100vh; }
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 60px;
+      border-bottom: 1px solid #161620; background: #08080f;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .logo {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 18px; letter-spacing: 0.18em; color: #c9b99a; font-weight: 400;
+      text-transform: uppercase;
+    }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-icon-btn {
+      background: none; border: none; color: #555; padding: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-icon-btn:hover { color: #c9b99a; opacity: 1; }
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; letter-spacing: 0.14em; font-weight: 700;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── BREADCRUMB TABS ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 0;
+      padding: 0 32px; height: 44px;
+      border-bottom: 1px solid #161620; background: #08080f;
+      overflow-x: auto; white-space: nowrap;
+    }
+    .breadcrumb::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 0 18px; height: 44px; line-height: 44px;
+      font-size: 10px; letter-spacing: 0.14em; color: #8a8a9a;
+      border: none; background: none; cursor: pointer; font-family: inherit;
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      text-transform: uppercase;
+    }
+    .tab.active { color: #c9b99a; border-bottom: 2px solid #c9b99a; }
+    .tab-sep { color: #555; font-size: 12px; padding: 0 2px; user-select: none; }
+
+    /* ── CONTENT ── */
+    .content { max-width: 900px; margin: 0 auto; padding: 40px 32px; }
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .breadcrumb { padding: 0 16px; }
+      .content { padding: 24px 16px; }
+      .grid2 { grid-template-columns: 1fr !important; }
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 32px; }
+    .page-eyebrow { font-size: 10px; letter-spacing: 0.18em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 8px; }
+    .page-title { font-family: Georgia, serif; font-size: 32px; color: #e2ddd6; font-weight: 400; line-height: 1.1; }
+    .page-title span { color: #c9b99a; }
+    .page-header-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+
+    /* ── CARDS ── */
+    .card { background: #0b0b16; border: 1px solid #161620; border-radius: 0; padding: 28px; margin-bottom: 1px; }
+    .card-group { border: 1px solid #161620; margin-bottom: 24px; }
+    .card-group .card { border: none; border-bottom: 1px solid #161620; margin-bottom: 0; }
+    .card-group .card:last-child { border-bottom: none; }
+    .card-label { font-size: 10px; letter-spacing: 0.16em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 20px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #161620; margin-bottom: 24px; }
+    .grid2 .card { margin-bottom: 0; }
+
+    /* ── BIG STAT ── */
+    .stat-block { margin-bottom: 20px; }
+    .stat-number { font-family: Georgia, serif; font-size: 56px; line-height: 1; color: #c9b99a; margin-bottom: 4px; }
+    .stat-label { font-size: 11px; color: #8a8a9a; letter-spacing: 0.1em; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-block; padding: 0 24px; height: 44px; line-height: 44px; border: none; font-size: 11px; letter-spacing: 0.12em; font-weight: 700; cursor: pointer; font-family: inherit; text-transform: uppercase; white-space: nowrap; }
+    .btn-primary { background: #c9b99a; color: #08080f; }
+    .btn-primary:hover { background: #d4c4aa; opacity: 1; }
+    .btn-outline { background: transparent; color: #888; border: 1px solid #222235; }
+    .btn-outline:hover { border-color: #c9b99a; color: #c9b99a; opacity: 1; }
+    .btn-ghost { background: transparent; color: #a8a8b8; border: none; padding: 0 12px; height: 36px; line-height: 36px; font-size: 11px; letter-spacing: 0.1em; }
+    .btn-ghost:hover { color: #c9b99a; opacity: 1; }
+    .btn-danger { background: transparent; color: #ef4444; border: 1px solid #7f1d1d; }
+    .btn-sm { height: 34px; line-height: 34px; padding: 0 16px; font-size: 10px; }
+    .btn-full { width: 100%; display: block; text-align: center; }
+    .btn-icon { width: 36px; height: 36px; line-height: 36px; padding: 0; text-align: center; font-size: 14px; }
+
+    /* ── FORM FIELDS ── */
+    .field-label { font-size: 10px; color: #a8a8b8; letter-spacing: 0.12em; display: block; margin-bottom: 6px; text-transform: uppercase; }
+    .field {
+      width: 100%; background: #0b0b16; border: none; border-bottom: 1px solid #222235;
+      padding: 10px 0; color: #e2ddd6; font-size: 13px; margin-bottom: 20px; font-family: inherit;
+    }
+    .field:focus { border-bottom-color: #c9b99a; }
+    select.field { appearance: none; cursor: pointer; }
+    textarea.field { border: 1px solid #222235; padding: 12px; border-radius: 0; }
+    textarea.field:focus { border-color: #c9b99a; }
+
+    /* ── ROWS / LIST ── */
+    .list-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; border-bottom: 1px solid #161620;
+    }
+    .list-row:last-child { border-bottom: none; }
+    .list-row-left { flex: 1; min-width: 0; }
+    .list-row-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; margin-left: 16px; }
+    .row-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: #e2ddd6; }
+    .row-meta { font-size: 12px; color: #a8a8b8; line-height: 1.5; }
+    .row-note { font-size: 11px; color: #7a7a8c; margin-top: 4px; font-style: italic; }
+
+    /* ── TAGS ── */
+    .tag { display: inline-block; padding: 3px 10px; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid; }
+
+    /* ── DIVIDER ── */
+    .divider { border-top: 1px solid #161620; margin: 20px 0; }
+
+    /* ── EMPTY STATE ── */
+    .empty { text-align: center; padding: 60px 20px; color: #6a6a7c; }
+    .empty-title { font-family: Georgia, serif; font-size: 20px; margin-bottom: 8px; color: #5a5a6c; }
+    .empty-sub { font-size: 12px; color: #6a6a7c; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: #000000e0;
+      display: flex; align-items: flex-end; justify-content: center;
+      z-index: 50;
+    }
+    @media (min-width: 640px) { .modal-overlay { align-items: center; } }
+    .modal-box {
+      background: #0b0b16; border-top: 1px solid #222235;
+      padding: 32px; width: 100%; max-width: 500px; max-height: 92vh; overflow-y: auto;
+    }
+    @media (min-width: 640px) { .modal-box { border: 1px solid #222235; } }
+    .modal-eyebrow { font-size: 10px; letter-spacing: 0.16em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 8px; }
+    .modal-title { font-family: Georgia, serif; font-size: 24px; color: #c9b99a; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 12px; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; font-size: 12px; letter-spacing: 0.08em;
+      z-index: 200; max-width: 360px; width: calc(100% - 32px);
+      display: none; text-align: center; text-transform: uppercase;
+    }
+
+    /* ── AUTH ── */
+    .auth-page { display: flex; min-height: 100vh; }
+    .auth-left {
+      flex: 1; background: #0b0b16; border-right: 1px solid #161620;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 48px;
+    }
+    @media (max-width: 640px) { .auth-left { display: none; } }
+    .auth-left-logo { font-family: Georgia, serif; font-size: 22px; letter-spacing: 0.18em; color: #c9b99a; }
+    .auth-left-headline { font-family: Georgia, serif; font-size: 40px; color: #e2ddd6; line-height: 1.2; }
+    .auth-left-headline span { color: #c9b99a; }
+    .auth-left-sub { font-size: 13px; color: #a8a8b8; line-height: 1.7; margin-top: 16px; max-width: 340px; }
+    .auth-left-footer { font-size: 11px; color: #5a5a6c; letter-spacing: 0.1em; }
+    .auth-right { width: 420px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; padding: 48px; }
+    @media (max-width: 640px) { .auth-right { width: 100%; padding: 32px 24px; } }
+    .auth-right-logo { font-family: Georgia, serif; font-size: 22px; letter-spacing: 0.18em; color: #c9b99a; margin-bottom: 40px; display: none; }
+    @media (max-width: 640px) { .auth-right-logo { display: block; } }
+    .auth-eyebrow { font-size: 10px; letter-spacing: 0.16em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 8px; }
+    .auth-title { font-family: Georgia, serif; font-size: 28px; color: #e2ddd6; margin-bottom: 32px; }
+    .auth-switch { font-size: 12px; color: #a8a8b8; margin-top: 24px; }
+    .auth-switch button { background: none; border: none; color: #c9b99a; cursor: pointer; font-family: inherit; font-size: 12px; letter-spacing: 0.06em; padding: 0; }
+
+    /* ── PAYWALL ── */
+    .paywall-page { min-height: 100vh; display: flex; flex-direction: column; }
+    .paywall-content { flex: 1; max-width: 800px; margin: 0 auto; padding: 48px 32px; width: 100%; }
+    @media (max-width: 640px) { .paywall-content { padding: 32px 16px; } }
+    .paywall-eyebrow { font-size: 10px; letter-spacing: 0.16em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 10px; }
+    .paywall-headline { font-family: Georgia, serif; font-size: 36px; color: #e2ddd6; margin-bottom: 8px; }
+    .paywall-sub { font-size: 13px; color: #a8a8b8; margin-bottom: 48px; line-height: 1.6; }
+    .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #161620; margin-bottom: 32px; }
+    @media (max-width: 560px) { .plan-grid { grid-template-columns: 1fr; } }
+    .plan-card { background: #0b0b16; padding: 32px; cursor: pointer; position: relative; transition: background 0.15s; }
+    .plan-card.selected { background: #0f0f1e; }
+    .plan-card.selected::after { content: ''; position: absolute; inset: 0; border: 1px solid #c9b99a; pointer-events: none; }
+    .plan-price { font-family: Georgia, serif; font-size: 32px; color: #c9b99a; margin-bottom: 4px; }
+    .plan-period { font-size: 10px; letter-spacing: 0.12em; color: #8a8a9a; margin-bottom: 20px; }
+    .plan-name { font-size: 11px; letter-spacing: 0.16em; color: #888; text-transform: uppercase; margin-bottom: 20px; font-weight: 700; }
+    .plan-feature { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+    .plan-check { color: #c9b99a; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .plan-feature-text { font-size: 12px; color: #666; line-height: 1.4; }
+    .plan-selected-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-size: 9px; letter-spacing: 0.12em; color: #c9b99a;
+      border: 1px solid #c9b99a44; padding: 3px 10px; text-transform: uppercase;
+    }
+    .paywall-cta { text-align: center; }
+    .paywall-note { font-size: 11px; color: #7a7a8c; margin-top: 12px; letter-spacing: 0.08em; }
+
+    /* ── TRIGGER BANNER ── */
+    .trigger-banner {
+      background: #1a0808; border-left: 3px solid #ef4444;
+      padding: 20px 28px; margin-bottom: 32px;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .trigger-banner-label { font-size: 10px; letter-spacing: 0.16em; color: #ef4444; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+    .trigger-banner-desc { font-size: 13px; color: #888; }
+
+    /* ── TRIAL BANNER ── */
+    .trial-banner {
+      background: #0d160d; border-left: 3px solid #22c55e;
+      padding: 20px 28px; margin-bottom: 32px;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .trial-banner-label { font-size: 10px; letter-spacing: 0.16em; color: #22c55e; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+    .trial-banner-desc { font-size: 13px; color: #888; max-width: 480px; }
+
+    /* ── 3-COLUMN PLAN GRID ── */
+    .plan-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 760px) { .plan-grid-3 { grid-template-columns: 1fr; } }
+    .plan-card.trial-card { background: #0d160d; }
+    .plan-card.trial-card.selected { background: #0f1f0f; }
+    .plan-card.trial-card.selected::after { border-color: #22c55e; }
+    .plan-card.locked { cursor: not-allowed; opacity: 0.4; }
+
+    /* ── STEP LIST ── */
+    .step-list { }
+    .step-row { display: flex; gap: 24px; padding: 16px 0; border-bottom: 1px solid #161620; align-items: flex-start; }
+    .step-row:last-child { border-bottom: none; }
+    .step-num { font-family: Georgia, serif; font-size: 22px; color: #5a5a6c; min-width: 32px; flex-shrink: 0; }
+    .step-title { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 3px; letter-spacing: 0.06em; }
+    .step-desc { font-size: 12px; color: #8a8a9a; line-height: 1.5; }
+
+    /* ── OVERVIEW STATS ── */
+    .stat-row { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #161620; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row-label { font-size: 12px; color: #a8a8b8; }
+    .stat-row-val { font-family: Georgia, serif; font-size: 24px; color: #c9b99a; }
+
+    /* ── BEN CARD ── */
+    .ben-card { background: #0b0b16; border: 1px solid #161620; padding: 24px; margin-bottom: 1px; }
+    .ben-name { font-family: Georgia, serif; font-size: 20px; color: #e2ddd6; margin-bottom: 6px; }
+    .ben-email { font-size: 12px; color: #a8a8b8; margin-bottom: 2px; }
+    .ben-phone { font-size: 12px; color: #8a8a9a; }
+    .ben-footer { font-size: 11px; color: #5a5a6c; margin-top: 16px; padding-top: 14px; border-top: 1px solid #161620; letter-spacing: 0.06em; }
+
+    /* ── PLAN BADGE ── */
+    .plan-badge { font-size: 9px; letter-spacing: 0.14em; color: #c9b99a; border: 1px solid #c9b99a44; padding: 3px 10px; text-transform: uppercase; }
+
+    /* ── LIMIT BAR ── */
+    .limit-bar { background: #0b0b16; border-left: 2px solid #c9b99a44; padding: 14px 20px; font-size: 12px; color: #a8a8b8; margin-bottom: 24px; letter-spacing: 0.04em; }
+
+    /* ── SEALED NOTICE ── */
+    .sealed-notice { background: #0b0b16; border-left: 2px solid #222235; padding: 14px 20px; font-size: 12px; color: #8a8a9a; margin-bottom: 24px; line-height: 1.6; }
+
+    /* ── MESSAGE CARD ── */
+    .msg-card { background: #0b0b16; border: 1px solid #161620; padding: 28px; margin-bottom: 1px; }
+    .msg-to { font-size: 10px; letter-spacing: 0.14em; color: #8a8a9a; text-transform: uppercase; margin-bottom: 12px; }
+    .msg-body { font-size: 14px; color: #666; line-height: 1.8; font-style: italic; }
+
+    /* ── LOADER ── */
+    .loader { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .loader-logo { font-family: Georgia, serif; color: #c9b99a; font-size: 22px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    /* ── ERROR ── */
+    .error-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 24px; padding: 24px; }
+    .error-box { background: #0b0b16; border: 1px solid #7f1d1d; padding: 28px; max-width: 420px; width: 100%; }
+    .error-label { font-size: 10px; letter-spacing: 0.16em; color: #ef4444; text-transform: uppercase; margin-bottom: 10px; }
+    .error-msg { font-size: 13px; color: #888; line-height: 1.6; }
+    .error-detail { font-size: 11px; color: #8a8a9a; margin-top: 12px; font-family: monospace; }
+  </style>
+</head>
+<body>
+<div id="app"><div class="loader"><div class="loader-logo">HERITA</div></div></div>
+<div id="toast"></div>
+
+<script>
+var SUPABASE_URL      = 'https://rmdsvckuumegqwflncml.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtZHN2Y2t1dW1lZ3F3ZmxuY21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjA1NzksImV4cCI6MjA5ODMzNjU3OX0.gUN7ffBe-yP765a22076SAzw8F6FQwD6-OjuHe4C5j8';
+var PAYSTACK_KEY      = 'pk_live_96c120dca7c0729fceba177b67720a67030356a3';
+
+var PLANS = {
+  trial:   { name:'Free Trial', price:0, label:'₦0', period:'/7 days', days:7,
+             features:['Full Legacy plan access','1 beneficiary','Asset vault','Document upload','Final messages','No card required'] },
+  basic:   { name:'Guardian', price:50000,  label:'₦50,000', period:'/yr', days:30,
+             features:['Asset vault','3 beneficiaries','Final messages','30-day check-in'] },
+  premium: { name:'Legacy',   price:100000, label:'₦100,000', period:'/yr', days:14,
+             features:['Everything in Guardian','Unlimited beneficiaries','Document upload','Crypto instructions','14-day check-in','Lawyer contact storage'] }
+};
+
+var _sb = null;
+var state = {
+  user:null, profile:null, loading:true, initError:null, needsSetup:false,
+  tab:'dashboard', modal:null,
+  assets:[], beneficiaries:[], messages:[], documents:[],
+  selectedPlan:'trial', authMode:'login', uploading:false,
+  authEmail:'', authPassword:'',
+  assetName:'', assetType:'property', assetValue:'', assetBen:'', assetNotes:'',
+  benName:'', benEmail:'', benPhone:'', benRel:'',
+  msgBen:'', msgContent:'',
+  docName:'', docBen:'', docFile:null
+};
+var toastTimer = null;
+
+function fmt(n) { try { return new Intl.NumberFormat('en-NG').format(n); } catch(e){ return n; } }
+function fmtDate(d) { try { return new Date(d).toLocaleDateString('en-NG',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return d; } }
+function daysUntil(d) { return Math.ceil((new Date(d) - new Date()) / 86400000); }
+function esc(s) {
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function getBenName(id) { var b=state.beneficiaries.find(function(b){return b.id===id;}); return b?b.name:'—'; }
+function showToast(msg,type) {
+  type=type||'success';
+  var el=document.getElementById('toast'); if(!el)return;
+  var c={success:['#14532d','#86efac','#166534'],error:['#7f1d1d','#fca5a5','#991b1b'],warn:['#78350f','#fcd34d','#92400e']}[type]||['#14532d','#86efac','#166534'];
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;font-size:11px;letter-spacing:0.1em;z-index:200;max-width:360px;width:calc(100% - 32px);display:block;text-align:center;text-transform:uppercase;background:'+c[0]+';color:'+c[1]+';border:1px solid '+c[2]+';';
+  el.textContent=msg; clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){el.style.display='none';},4000);
+}
+function statusInfo() {
+  var p=state.profile; if(!p) return {color:'#22c55e',label:'ACTIVE',daysLeft:null};
+  var dl=p.checkin_due?daysUntil(p.checkin_due):null;
+  if(p.triggered)          return {color:'#ef4444',label:'TRIGGERED',daysLeft:dl};
+  if(dl!==null&&dl<=0)     return {color:'#ef4444',label:'OVERDUE',daysLeft:dl};
+  if(dl!==null&&dl<=7)     return {color:'#f59e0b',label:'CHECK-IN DUE',daysLeft:dl};
+  return {color:'#22c55e',label:'ACTIVE',daysLeft:dl};
+}
+var ATC={property:'#c9b99a',bank:'#22c55e',crypto:'#8b5cf6',insurance:'#38bdf8',other:'#64748b'};
+function tag(text,color){return '<span class="tag" style="color:'+color+';border-color:'+color+'44;background:'+color+'11;">'+esc(text)+'</span>';}
+function benOpts(all){
+  var o=all?'<option value="">All beneficiaries</option>':'<option value="">Select beneficiary</option>';
+  state.beneficiaries.forEach(function(b){o+='<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';});
+  return o;
+}
+
+function sb() { if(!_sb){showToast('Not connected. Check internet.','error');throw new Error('No supabase');} return _sb; }
+
+async function loadProfile() { var r=await sb().from('profiles').select('*').eq('id',state.user.id).single(); state.profile=r.data||null; }
+async function loadAll() {
+  if(!state.user)return; var uid=state.user.id;
+  var res=await Promise.all([
+    sb().from('assets').select('*').eq('user_id',uid).order('created_at',{ascending:false}),
+    sb().from('beneficiaries').select('*').eq('user_id',uid).order('created_at'),
+    sb().from('messages').select('*').eq('user_id',uid),
+    sb().from('documents').select('*').eq('user_id',uid).order('created_at',{ascending:false})
+  ]);
+  state.assets=(res[0].data)||[]; state.beneficiaries=(res[1].data)||[];
+  state.messages=(res[2].data)||[]; state.documents=(res[3].data)||[];
+}
+
+async function handleAuth() {
+  if(!state.authEmail||!state.authPassword)return showToast('Email and password required.','error');
+  state.loading=true; render();
+  try {
+    var res=state.authMode==='login'
+      ?await sb().auth.signInWithPassword({email:state.authEmail,password:state.authPassword})
+      :await sb().auth.signUp({email:state.authEmail,password:state.authPassword});
+    if(res.error){showToast(res.error.message,'error');}
+    else if(state.authMode==='signup')showToast('Account created. Check your email to confirm.');
+  }catch(e){showToast('Auth error: '+e.message,'error');}
+  state.loading=false; render();
+}
+async function handleLogout() {
+  try{await sb().auth.signOut();}catch(e){}
+  state.user=null;state.profile=null;state.assets=[];state.beneficiaries=[];state.messages=[];state.documents=[];
+  render();
+}
+
+async function activatePlan() {
+  if (state.selectedPlan === 'trial') return startTrial();
+  initPaystack();
+}
+
+async function startTrial() {
+  try {
+    if (state.profile && state.profile.trial_used) {
+      showToast('Free trial already used on this account. Choose a paid plan.', 'warn');
+      return;
+    }
+    var plan = PLANS.trial;
+    await sb().from('profiles').upsert({
+      id: state.user.id, email: state.user.email, plan: 'trial',
+      plan_expires: new Date(Date.now() + plan.days * 86400000).toISOString(),
+      checkin_due: new Date(Date.now() + plan.days * 86400000).toISOString(),
+      triggered: false, trial_used: true
+    });
+    await loadProfile();
+    showToast('7-day free trial activated. Explore everything Legacy offers.');
+    render();
+  } catch(e) { showToast('Trial activation error: ' + e.message, 'error'); }
+}
+
+function initPaystack() {
+  if(!window.PaystackPop)return showToast('Paystack loading. Try again.','warn');
+  var plan=PLANS[state.selectedPlan];
+  try {
+    var h=window.PaystackPop.setup({
+      key:PAYSTACK_KEY,email:state.user.email,amount:plan.price*100,currency:'NGN',
+      ref:'herita_'+state.user.id+'_'+Date.now(),
+      onSuccess:async function(tx){
+        try{
+          await sb().from('profiles').upsert({
+            id:state.user.id,email:state.user.email,plan:state.selectedPlan,
+            plan_expires:new Date(Date.now()+365*86400000).toISOString(),
+            checkin_due:new Date(Date.now()+plan.days*86400000).toISOString(),
+            triggered:false,paystack_ref:tx.reference
+          });
+          await loadProfile(); showToast(plan.name+' plan activated.'); render();
+        }catch(e){showToast('Activation error: '+e.message,'error');}
+      },
+      onCancel:function(){showToast('Payment cancelled.','warn');}
+    });
+    h.openIframe();
+  }catch(e){showToast('Paystack error: '+e.message,'error');}
+}
+
+async function handleCheckin() {
+  try{
+    var days=state.profile&&state.profile.plan==='premium'?14:(state.profile&&state.profile.plan==='trial'?7:30);
+    await sb().from('profiles').update({checkin_due:new Date(Date.now()+days*86400000).toISOString(),triggered:false}).eq('id',state.user.id);
+    await loadProfile(); showToast('Check-in confirmed. Next in '+days+' days.'); render();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+async function simulateTrigger() {
+  try{await sb().from('profiles').update({triggered:true}).eq('id',state.user.id);await loadProfile();showToast('Trigger simulated.','warn');render();}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function saveAsset() {
+  if(!state.assetName||!state.assetBen)return showToast('Name and beneficiary required.','error');
+  try{
+    var r=await sb().from('assets').insert({name:state.assetName,type:state.assetType,value:state.assetValue||null,beneficiary_id:state.assetBen,notes:state.assetNotes,user_id:state.user.id});
+    if(r.error)return showToast(r.error.message,'error');
+    state.assetName='';state.assetType='property';state.assetValue='';state.assetBen='';state.assetNotes='';
+    state.modal=null;await loadAll();showToast('Asset saved.');render();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+async function deleteAsset(id) {
+  try{await sb().from('assets').delete().eq('id',id);state.assets=state.assets.filter(function(a){return a.id!==id;});showToast('Removed.');render();}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function saveBeneficiary() {
+  if(!state.benName||!state.benEmail)return showToast('Name and email required.','error');
+  var p = state.profile && state.profile.plan;
+  var limit = p==='premium' ? Infinity : (p==='trial' ? 1 : 3);
+  if(state.beneficiaries.length>=limit) {
+    var msg = p==='trial' ? 'Trial allows 1 beneficiary. Upgrade to add more.' : 'Guardian plan: 3 beneficiary limit. Upgrade to Legacy.';
+    return showToast(msg,'warn');
+  }
+  try{
+    var r=await sb().from('beneficiaries').insert({name:state.benName,email:state.benEmail,phone:state.benPhone,relationship:state.benRel,user_id:state.user.id});
+    if(r.error)return showToast(r.error.message,'error');
+    state.benName='';state.benEmail='';state.benPhone='';state.benRel='';
+    state.modal=null;await loadAll();showToast('Beneficiary added.');render();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+async function deleteBeneficiary(id) {
+  try{await sb().from('beneficiaries').delete().eq('id',id);state.beneficiaries=state.beneficiaries.filter(function(b){return b.id!==id;});showToast('Removed.');render();}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function saveMessage() {
+  if(!state.msgBen||!state.msgContent)return showToast('Select beneficiary and write message.','error');
+  try{
+    var ex=state.messages.find(function(m){return m.beneficiary_id===state.msgBen;});
+    if(ex)await sb().from('messages').update({content:state.msgContent}).eq('id',ex.id);
+    else await sb().from('messages').insert({beneficiary_id:state.msgBen,content:state.msgContent,user_id:state.user.id});
+    state.msgBen='';state.msgContent='';state.modal=null;await loadAll();showToast('Message saved.');render();
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function uploadDocument() {
+  if(!state.docFile||!state.docName)return showToast('Select file and name it.','error');
+  var p = state.profile && state.profile.plan;
+  if(p!=='premium'&&p!=='trial')return showToast('Document upload: Legacy plan or Free Trial only.','warn');
+  state.uploading=true;render();
+  try{
+    var ext=state.docFile.name.split('.').pop();
+    var path=state.user.id+'/'+Date.now()+'.'+ext;
+    var up=await sb().storage.from('documents').upload(path,state.docFile);
+    if(up.error){state.uploading=false;showToast(up.error.message,'error');render();return;}
+    await sb().from('documents').insert({user_id:state.user.id,name:state.docName,beneficiary_id:state.docBen||null,storage_path:path,file_type:ext});
+    state.docFile=null;state.docName='';state.docBen='';state.modal=null;state.uploading=false;
+    await loadAll();showToast('Document uploaded.');render();
+  }catch(e){state.uploading=false;showToast('Error: '+e.message,'error');render();}
+}
+async function getDocumentUrl(p) {
+  try{var r=await sb().storage.from('documents').createSignedUrl(p,60);if(r.data&&r.data.signedUrl)window.open(r.data.signedUrl,'_blank');else showToast('Could not retrieve file.','error');}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+async function deleteDocument(id,p) {
+  try{await sb().storage.from('documents').remove([p]);await sb().from('documents').delete().eq('id',id);state.documents=state.documents.filter(function(d){return d.id!==id;});showToast('Deleted.');render();}
+  catch(e){showToast('Error: '+e.message,'error');}
+}
+
+// ─── RENDER ──────────────────────────────────────────────
+function render() {
+  var app=document.getElementById('app'); if(!app)return;
+  if(state.loading){app.innerHTML='<div class="loader"><div class="loader-logo">HERITA</div></div>';return;}
+  if(state.initError){
+    app.innerHTML='<div class="error-page">'+
+      '<div class="loader-logo" style="margin-bottom:8px;">HERITA</div>'+
+      '<div class="error-box">'+
+        '<div class="error-label">Connection Error</div>'+
+        '<div class="error-msg">Could not load required scripts. Check your internet connection and reload.</div>'+
+        '<div class="error-detail">'+esc(state.initError)+'</div>'+
+      '</div>'+
+      '<button class="btn btn-primary" onclick="location.reload()">RELOAD PAGE</button>'+
+    '</div>';return;
+  }
+  if(!state.user){app.innerHTML=renderAuth();return;}
+  var isPaid=state.profile&&state.profile.plan&&state.profile.plan_expires&&new Date(state.profile.plan_expires)>new Date();
+  if(!isPaid){app.innerHTML=renderPaywall();return;}
+
+  var si=statusInfo();
+  var isPremium=state.profile&&state.profile.plan==='premium';
+  var isTrial=state.profile&&state.profile.plan==='trial';
+  var hasDocAccess=isPremium||isTrial;
+  var TABS=['dashboard','vault','beneficiaries','messages'];
+  if(hasDocAccess)TABS.push('documents');
+
+  var tabHTML='';
+  if(state.tab==='dashboard')tabHTML=renderDashboard(si,hasDocAccess,isTrial);
+  else if(state.tab==='vault')tabHTML=renderVault();
+  else if(state.tab==='beneficiaries')tabHTML=renderBeneficiaries(isPremium,isTrial);
+  else if(state.tab==='messages')tabHTML=renderMessages();
+  else if(state.tab==='documents')tabHTML=renderDocuments();
+
+  var modalHTML='';
+  if(state.modal==='asset')modalHTML=mAsset();
+  else if(state.modal==='beneficiary')modalHTML=mBen();
+  else if(state.modal==='message')modalHTML=mMsg();
+  else if(state.modal==='document')modalHTML=mDoc();
+
+  var pulsing=state.profile&&(state.profile.triggered||si.label==='OVERDUE');
+  var planName=state.profile&&PLANS[state.profile.plan]?PLANS[state.profile.plan].name:'';
+
+  app.innerHTML=
+    '<nav>'+
+      '<div class="logo">HERITA</div>'+
+      '<div class="nav-right">'+
+        '<div class="status-pill" style="color:'+si.color+'">'+
+          '<span class="status-dot" style="background:'+si.color+';animation:'+(pulsing?'pulse 1.5s infinite':'none')+'"></span>'+
+          si.label+
+        '</div>'+
+        '<span class="plan-badge">'+esc(planName)+'</span>'+
+        '<button class="nav-icon-btn btn-ghost" onclick="handleLogout()" title="Sign out">'+
+          '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>'+
+        '</button>'+
+      '</div>'+
+    '</nav>'+
+    '<div class="breadcrumb">'+
+      TABS.map(function(t,i){
+        return (i>0?'<span class="tab-sep">/</span>':'')+
+          '<button class="tab'+(state.tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+t+'</button>';
+      }).join('')+
+    '</div>'+
+    '<div class="content">'+tabHTML+'</div>'+
+    modalHTML;
+}
+
+function renderAuth() {
+  var m=state.authMode;
+  return '<div class="auth-page">'+
+    '<div class="auth-left">'+
+      '<div class="auth-left-logo">HERITA</div>'+
+      '<div>'+
+        '<div class="auth-left-headline">Your legacy,<br><span>protected.</span></div>'+
+        '<div class="auth-left-sub">Secure your assets, protect your family, and ensure your wishes are carried out — automatically.</div>'+
+      '</div>'+
+      '<div class="auth-left-footer">ENCRYPTED · PRIVATE · YOURS ALONE</div>'+
+    '</div>'+
+    '<div class="auth-right">'+
+      '<div class="auth-right-logo">HERITA</div>'+
+      '<div class="auth-eyebrow">'+(m==='login'?'Welcome back':'Get started')+'</div>'+
+      '<div class="auth-title">'+(m==='login'?'Sign in to your vault':'Create your vault')+'</div>'+
+      '<label class="field-label">Email address</label>'+
+      '<input class="field" type="email" placeholder="you@email.com" value="'+esc(state.authEmail)+'" oninput="state.authEmail=this.value" />'+
+      '<label class="field-label">Password</label>'+
+      '<input class="field" type="password" placeholder="••••••••" oninput="state.authPassword=this.value" onkeydown="if(event.key===\'Enter\')handleAuth()" />'+
+      '<button class="btn btn-primary btn-full" style="margin-top:8px" onclick="handleAuth()">'+(m==='login'?'SIGN IN →':'CREATE ACCOUNT →')+'</button>'+
+      '<div class="auth-switch">'+
+        (m==='login'?'Don\'t have an account? <button onclick="setAuthMode(\'signup\')">Create one</button>':'Already have an account? <button onclick="setAuthMode(\'login\')">Sign in</button>')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderPaywall() {
+  var sp=state.selectedPlan;
+  var trialUsed = state.profile && state.profile.trial_used;
+  var ctaLabel = sp==='trial' ? 'START FREE TRIAL →' : 'ACTIVATE '+esc(PLANS[sp].name.toUpperCase())+' — '+esc(PLANS[sp].label)+'/YR →';
+  var ctaNote = sp==='trial' ? 'NO CARD REQUIRED · 7 DAYS FULL ACCESS · CANCEL ANYTIME' : 'SECURED BY PAYSTACK · ANNUAL SUBSCRIPTION · CANCEL ANYTIME';
+  return '<div class="paywall-page">'+
+    '<nav><div class="logo">HERITA</div>'+
+    '<button class="btn-ghost btn" onclick="handleLogout()">SIGN OUT</button></nav>'+
+    '<div class="paywall-content">'+
+      '<div class="paywall-eyebrow">Protect your legacy</div>'+
+      '<div class="paywall-headline">Choose your plan.</div>'+
+      '<div class="paywall-sub">Not sure yet? Start with a 7-day free trial — full access, no card needed.</div>'+
+      '<div class="plan-grid plan-grid-3">'+
+        Object.entries(PLANS).map(function(e){
+          var k=e[0],p=e[1],sel=sp===k,isTrialCard=k==='trial',locked=isTrialCard&&trialUsed;
+          return '<div class="plan-card'+(sel?' selected':'')+(locked?' locked':'')+(isTrialCard?' trial-card':'')+'" onclick="'+(locked?'':'selectPlan(\''+k+'\')')+'">'+
+            (sel&&!locked?'<div class="plan-selected-badge">SELECTED</div>':'')+
+            (isTrialCard&&!locked?'<div class="plan-selected-badge" style="color:#22c55e;border-color:#22c55e44;">FREE</div>':'')+
+            (locked?'<div class="plan-selected-badge" style="color:#666;border-color:#8a8a9a;">USED</div>':'')+
+            '<div class="plan-name">'+esc(p.name)+'</div>'+
+            '<div class="plan-price">'+esc(p.label)+'</div>'+
+            '<div class="plan-period">'+(isTrialCard?'one-time':'per year')+'</div>'+
+            p.features.map(function(f){
+              return '<div class="plan-feature"><span class="plan-check">✓</span><span class="plan-feature-text">'+esc(f)+'</span></div>';
+            }).join('')+
+            (locked?'<div style="font-size:11px;color:#a8a8b8;margin-top:14px;">Already used on this account</div>':'')+
+          '</div>';
+        }).join('')+
+      '</div>'+
+      '<div class="paywall-cta">'+
+        '<button class="btn btn-primary" style="padding:0 48px;height:52px;line-height:52px;font-size:12px;" onclick="activatePlan()">'+ctaLabel+'</button>'+
+        '<div class="paywall-note">'+ctaNote+'</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderDashboard(si,isPremium,isTrial) {
+  var p=state.profile,days=isPremium&&!isTrial?14:(isTrial?7:30);
+  return (isTrial?
+    '<div class="trial-banner">'+
+      '<div><div class="trial-banner-label">★ Free Trial Active</div>'+
+      '<div class="trial-banner-desc">You have full access to Legacy features for '+Math.max(0,si.daysLeft||0)+' more day(s). Upgrade anytime to keep your vault active.</div></div>'+
+      '<button class="btn btn-primary btn-sm" onclick="upgradeFromTrial()">UPGRADE NOW</button>'+
+    '</div>':'')+
+  (p&&p.triggered?
+    '<div class="trigger-banner">'+
+      '<div><div class="trigger-banner-label">⚠ Trigger Activated</div>'+
+      '<div class="trigger-banner-desc">Beneficiaries have been notified and given access to their assigned assets.</div></div>'+
+      '<button class="btn btn-outline btn-sm" onclick="handleCheckin()">I\'M ALIVE</button></div>':'')+
+  '<div class="page-header">'+
+    '<div class="page-eyebrow">Overview</div>'+
+    '<div class="page-title">Your vault is <span>'+(p&&!p.triggered?'secure':'active')+'.</span></div>'+
+  '</div>'+
+  '<div class="grid2">'+
+    '<div class="card">'+
+      '<div class="card-label">Days until check-in</div>'+
+      '<div class="stat-number" style="color:'+si.color+'">'+Math.max(0,si.daysLeft||0)+'</div>'+
+      '<div class="stat-label" style="margin-bottom:28px;">Due '+(p&&p.checkin_due?fmtDate(p.checkin_due):'—')+'</div>'+
+      '<button class="btn btn-primary" onclick="handleCheckin()">CONFIRM I\'M ALIVE →</button>'+
+    '</div>'+
+    '<div class="card">'+
+      '<div class="card-label">Vault summary</div>'+
+      '<div class="stat-row"><span class="stat-row-label">Assets</span><span class="stat-row-val">'+state.assets.length+'</span></div>'+
+      '<div class="stat-row"><span class="stat-row-label">Beneficiaries</span><span class="stat-row-val">'+state.beneficiaries.length+'</span></div>'+
+      '<div class="stat-row"><span class="stat-row-label">Messages</span><span class="stat-row-val">'+state.messages.length+'</span></div>'+
+      '<div class="stat-row"><span class="stat-row-label">Documents</span><span class="stat-row-val">'+state.documents.length+'</span></div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="card">'+
+    '<div class="card-label">How the trigger works</div>'+
+    '<div class="step-list">'+
+      [['01','Every '+days+' days','You receive a check-in notification via email.'],
+       ['02','7-day warning',"If you haven't responded, a final reminder is sent."],
+       ['03','Trigger fires','No response triggers automatic vault access for beneficiaries.'],
+       ['04','They receive','Assigned assets, documents, and your sealed messages.']].map(function(r){
+        return '<div class="step-row"><div class="step-num">'+r[0]+'</div><div><div class="step-title">'+r[1]+'</div><div class="step-desc">'+r[2]+'</div></div></div>';
+      }).join('')+
+    '</div>'+
+  '</div>'+
+  '<div style="text-align:right;margin-top:8px;">'+
+    '<button class="btn btn-danger btn-sm" onclick="simulateTrigger()">SIMULATE MISSED CHECK-IN</button>'+
+  '</div>';
+}
+
+function renderVault() {
+  return '<div class="page-header-row">'+
+    '<div class="page-header" style="margin-bottom:0;">'+
+      '<div class="page-eyebrow">Protected Assets</div>'+
+      '<div class="page-title">Asset <span>Vault</span></div>'+
+    '</div>'+
+    '<button class="btn btn-primary" onclick="openModal(\'asset\')">+ ADD ASSET</button>'+
+  '</div><div style="margin-top:32px;">'+
+  '<div class="card-group">'+
+    (state.assets.length===0?
+      '<div class="card"><div class="empty"><div class="empty-title">No assets yet.</div><div class="empty-sub">Add your properties, accounts, and investments.</div></div></div>':
+      state.assets.map(function(a){
+        return '<div class="card"><div class="list-row" style="padding:0;">'+
+          '<div class="list-row-left">'+
+            '<div class="row-title">'+esc(a.name)+'</div>'+
+            '<div class="row-meta">→ '+esc(getBenName(a.beneficiary_id))+(a.value?' &nbsp;·&nbsp; ₦'+fmt(a.value):'')+'</div>'+
+            (a.notes?'<div class="row-note">'+esc(a.notes)+'</div>':'')+
+          '</div>'+
+          '<div class="list-row-right">'+
+            tag((a.type||'').toUpperCase(),ATC[a.type]||'#64748b')+
+            '<button class="btn btn-ghost btn-icon" onclick="deleteAsset(\''+esc(a.id)+'\')">✕</button>'+
+          '</div></div></div>';
+      }).join(''))+
+  '</div></div>';
+}
+
+function renderBeneficiaries(isPremium,isTrial) {
+  var limitText = isPremium ? '' : (isTrial ? 'Free trial · '+state.beneficiaries.length+'/1 beneficiary · <a href="#" onclick="upgradeFromTrial()" style="color:#c9b99a;text-decoration:none;">Upgrade for more</a>' : 'Guardian plan · '+state.beneficiaries.length+'/3 beneficiaries · <a href="#" onclick="selectPlan(\'premium\')" style="color:#c9b99a;text-decoration:none;">Upgrade to Legacy for unlimited</a>');
+  return '<div class="page-header-row">'+
+    '<div class="page-header" style="margin-bottom:0;">'+
+      '<div class="page-eyebrow">People</div>'+
+      '<div class="page-title"><span>Beneficiaries</span></div>'+
+    '</div>'+
+    '<button class="btn btn-primary" onclick="openModal(\'beneficiary\')">+ ADD PERSON</button>'+
+  '</div><div style="margin-top:32px;">'+
+  (!isPremium?'<div class="limit-bar">'+limitText+'</div>':'')+
+  (state.beneficiaries.length===0?
+    '<div class="ben-card"><div class="empty"><div class="empty-title">No beneficiaries yet.</div><div class="empty-sub">Add the people who will receive your assets.</div></div></div>':
+    state.beneficiaries.map(function(b){
+      var ac=state.assets.filter(function(a){return a.beneficiary_id===b.id;}).length;
+      var hm=!!state.messages.find(function(m){return m.beneficiary_id===b.id;});
+      var dc=state.documents.filter(function(d){return d.beneficiary_id===b.id;}).length;
+      return '<div class="ben-card">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'+
+          '<div>'+
+            '<div class="ben-name">'+esc(b.name)+'</div>'+
+            '<div class="ben-email">'+esc(b.email)+'</div>'+
+            (b.phone?'<div class="ben-phone">'+esc(b.phone)+'</div>':'')+
+          '</div>'+
+          '<div style="display:flex;gap:8px;align-items:center;">'+
+            (b.relationship?tag(b.relationship.toUpperCase(),'#c9b99a'):'')+
+            '<button class="btn btn-ghost btn-icon" onclick="deleteBeneficiary(\''+esc(b.id)+'\')">✕</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="ben-footer">'+ac+' ASSET(S) &nbsp;·&nbsp; '+(hm?'MESSAGE WRITTEN':'NO MESSAGE')+' &nbsp;·&nbsp; '+dc+' DOCUMENT(S)</div>'+
+      '</div>';
+    }).join(''))+
+  '</div>';
+}
+
+function renderMessages() {
+  return '<div class="page-header-row">'+
+    '<div class="page-header" style="margin-bottom:0;">'+
+      '<div class="page-eyebrow">Sealed</div>'+
+      '<div class="page-title">Final <span>Messages</span></div>'+
+    '</div>'+
+    '<button class="btn btn-primary" onclick="openModal(\'message\')">+ WRITE</button>'+
+  '</div><div style="margin-top:32px;">'+
+  '<div class="sealed-notice">These messages are encrypted and sealed until the trigger fires. Only then do your beneficiaries receive them.</div>'+
+  (state.messages.length===0?
+    '<div class="msg-card"><div class="empty"><div class="empty-title">No messages yet.</div><div class="empty-sub">Write what you need them to know.</div></div></div>':
+    state.messages.map(function(m){
+      return '<div class="msg-card">'+
+        '<div class="msg-to">To: '+esc(getBenName(m.beneficiary_id))+'</div>'+
+        '<div class="msg-body">"'+esc(m.content)+'"</div>'+
+        '<div style="margin-top:20px;"><button class="btn btn-outline btn-sm" onclick="editMsg(\''+esc(m.beneficiary_id)+'\',\''+esc(m.content)+'\')">EDIT MESSAGE</button></div>'+
+      '</div>';
+    }).join(''))+
+  '</div>';
+}
+
+function renderDocuments() {
+  return '<div class="page-header-row">'+
+    '<div class="page-header" style="margin-bottom:0;">'+
+      '<div class="page-eyebrow">Encrypted Files</div>'+
+      '<div class="page-title">Document <span>Vault</span></div>'+
+    '</div>'+
+    '<button class="btn btn-primary" onclick="openModal(\'document\')">+ UPLOAD</button>'+
+  '</div><div style="margin-top:32px;">'+
+  '<div class="card-group">'+
+    (state.documents.length===0?
+      '<div class="card"><div class="empty"><div class="empty-title">No documents.</div><div class="empty-sub">Title deeds, bank statements, insurance policies.</div></div></div>':
+      state.documents.map(function(d){
+        return '<div class="card"><div class="list-row" style="padding:0;">'+
+          '<div class="list-row-left">'+
+            '<div class="row-title">'+esc(d.name)+'</div>'+
+            '<div class="row-meta">'+(d.file_type?d.file_type.toUpperCase():'')+' &nbsp;·&nbsp; '+(d.beneficiary_id?'For '+esc(getBenName(d.beneficiary_id)):'All beneficiaries')+'</div>'+
+          '</div>'+
+          '<div class="list-row-right">'+
+            '<button class="btn btn-outline btn-sm" onclick="getDocumentUrl(\''+esc(d.storage_path)+'\')">VIEW</button>'+
+            '<button class="btn btn-ghost btn-icon" onclick="deleteDocument(\''+esc(d.id)+'\',\''+esc(d.storage_path)+'\')">✕</button>'+
+          '</div></div></div>';
+      }).join(''))+
+  '</div></div>';
+}
+
+function mWrap(content){
+  return '<div class="modal-overlay" onclick="if(event.target===this)closeModal()">'+
+    '<div class="modal-box">'+content+'</div></div>';
+}
+
+function mAsset(){
+  return mWrap(
+    '<div class="modal-eyebrow">Vault</div>'+
+    '<div class="modal-title">Add Asset</div>'+
+    '<label class="field-label">Asset name *</label>'+
+    '<input class="field" placeholder="Maitama Plot, GTB Account, BTC Wallet..." value="'+esc(state.assetName)+'" oninput="state.assetName=this.value" />'+
+    '<label class="field-label">Type</label>'+
+    '<select class="field" onchange="state.assetType=this.value">'+
+      ['property','bank','crypto','insurance','other'].map(function(t){return '<option value="'+t+'"'+(state.assetType===t?' selected':'')+'>'+t.charAt(0).toUpperCase()+t.slice(1)+'</option>';}).join('')+
+    '</select>'+
+    '<label class="field-label">Estimated value (₦)</label>'+
+    '<input class="field" type="number" placeholder="0" value="'+esc(state.assetValue)+'" oninput="state.assetValue=this.value" />'+
+    '<label class="field-label">Assign to beneficiary *</label>'+
+    '<select class="field" onchange="state.assetBen=this.value">'+benOpts()+'</select>'+
+    '<label class="field-label">Access notes / instructions</label>'+
+    '<textarea class="field" style="height:80px;resize:vertical;" placeholder="Account number, deed location, wallet seed..." oninput="state.assetNotes=this.value">'+esc(state.assetNotes)+'</textarea>'+
+    '<div class="modal-actions">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>'+
+      '<button class="btn btn-primary" onclick="saveAsset()">SAVE ASSET</button>'+
+    '</div>'
+  );
+}
+function mBen(){
+  return mWrap(
+    '<div class="modal-eyebrow">People</div>'+
+    '<div class="modal-title">Add Beneficiary</div>'+
+    '<label class="field-label">Full name *</label>'+
+    '<input class="field" placeholder="Maryam Garba" value="'+esc(state.benName)+'" oninput="state.benName=this.value" />'+
+    '<label class="field-label">Email *</label>'+
+    '<input class="field" type="email" placeholder="maryam@email.com" value="'+esc(state.benEmail)+'" oninput="state.benEmail=this.value" />'+
+    '<label class="field-label">Phone</label>'+
+    '<input class="field" placeholder="+234 800 000 0000" value="'+esc(state.benPhone)+'" oninput="state.benPhone=this.value" />'+
+    '<label class="field-label">Relationship</label>'+
+    '<input class="field" placeholder="Spouse, Child, Sibling..." value="'+esc(state.benRel)+'" oninput="state.benRel=this.value" />'+
+    '<div class="modal-actions">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>'+
+      '<button class="btn btn-primary" onclick="saveBeneficiary()">SAVE</button>'+
+    '</div>'
+  );
+}
+function mMsg(){
+  return mWrap(
+    '<div class="modal-eyebrow">Sealed</div>'+
+    '<div class="modal-title">Final Message</div>'+
+    '<label class="field-label">To</label>'+
+    '<select class="field" onchange="state.msgBen=this.value">'+benOpts()+'</select>'+
+    '<label class="field-label">Message</label>'+
+    '<textarea class="field" style="height:160px;resize:vertical;" placeholder="Write what you need them to know. Delivered only after the trigger fires." oninput="state.msgContent=this.value">'+esc(state.msgContent)+'</textarea>'+
+    '<div class="modal-actions">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>'+
+      '<button class="btn btn-primary" onclick="saveMessage()">SAVE MESSAGE</button>'+
+    '</div>'
+  );
+}
+function mDoc(){
+  return mWrap(
+    '<div class="modal-eyebrow">Documents</div>'+
+    '<div class="modal-title">Upload Document</div>'+
+    '<label class="field-label">Document name *</label>'+
+    '<input class="field" placeholder="Certificate of Occupancy, Life Insurance Policy..." value="'+esc(state.docName)+'" oninput="state.docName=this.value" />'+
+    '<label class="field-label">Assign to beneficiary (optional)</label>'+
+    '<select class="field" onchange="state.docBen=this.value">'+benOpts(true)+'</select>'+
+    '<label class="field-label">File *</label>'+
+    '<input class="field" style="padding:10px 0;" type="file" accept=".pdf,.jpg,.jpeg,.png,.docx" onchange="state.docFile=this.files[0]" />'+
+    '<div style="font-size:11px;color:#8a8a9a;margin-bottom:20px;letter-spacing:0.06em;">PDF · JPG · PNG · DOCX</div>'+
+    '<div class="modal-actions">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>'+
+      '<button class="btn btn-primary" onclick="uploadDocument()"'+(state.uploading?' disabled':'')+'>'+
+        (state.uploading?'UPLOADING...':'UPLOAD')+
+      '</button>'+
+    '</div>'
+  );
+}
+
+window.handleAuth=handleAuth;window.handleLogout=handleLogout;
+window.handleCheckin=handleCheckin;window.simulateTrigger=simulateTrigger;
+window.initPaystack=initPaystack;window.activatePlan=activatePlan;window.startTrial=startTrial;
+window.upgradeFromTrial=function(){state.selectedPlan='premium';state.profile.plan_expires=null;render();};
+window.saveAsset=saveAsset;window.deleteAsset=deleteAsset;
+window.saveBeneficiary=saveBeneficiary;window.deleteBeneficiary=deleteBeneficiary;
+window.saveMessage=saveMessage;
+window.uploadDocument=uploadDocument;window.getDocumentUrl=getDocumentUrl;window.deleteDocument=deleteDocument;
+window.switchTab=function(t){state.tab=t;render();};
+window.selectPlan=function(p){state.selectedPlan=p;render();};
+window.setAuthMode=function(m){state.authMode=m;render();};
+window.openModal=function(m){state.modal=m;render();};
+window.closeModal=function(){state.modal=null;render();};
+window.editMsg=function(b,c){state.msgBen=b;state.msgContent=c;state.modal='message';render();};
+
+function loadScript(src,cb,onErr){var s=document.createElement('script');s.src=src;s.onload=cb;s.onerror=onErr;document.head.appendChild(s);}
+
+function initSupabase() {
+  try {
+    if(!window.supabase)throw new Error('Supabase library not available');
+    _sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    _sb.auth.getSession().then(function(r){
+      state.user=r.data&&r.data.session?r.data.session.user:null;
+      state.loading=false;
+      if(state.user){Promise.all([loadProfile(),loadAll()]).then(render).catch(function(e){showToast('Load error: '+e.message,'error');render();});}
+      else{render();}
+    }).catch(function(e){state.loading=false;state.initError='Session error: '+e.message;render();});
+    _sb.auth.onAuthStateChange(function(_e,session){
+      state.user=session?session.user:null;
+      if(state.user){Promise.all([loadProfile(),loadAll()]).then(render).catch(function(e){showToast('Load error: '+e.message,'error');render();});}
+      else{state.profile=null;state.assets=[];state.beneficiaries=[];state.messages=[];state.documents=[];render();}
+    });
+  }catch(e){state.loading=false;state.initError=e.message;render();}
+}
+
+loadScript('https://js.paystack.co/v1/inline.js',function(){},function(){console.warn('Paystack failed to load.');});
+
+var supabaseLoaded = false;
+function trySupabaseInit() {
+  if (supabaseLoaded) return;
+  supabaseLoaded = true;
+  initSupabase();
+}
+
+loadScript(
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+  function(){ trySupabaseInit(); },
+  function(){
+    loadScript('https://unpkg.com/@supabase/supabase-js@2',
+      function(){ trySupabaseInit(); },
+      function(){
+        if (!supabaseLoaded) {
+          supabaseLoaded = true;
+          state.loading=false;
+          state.initError='Could not load Supabase from any CDN. Check your internet connection or try disabling browser shields/ad-blockers for this site.';
+          render();
+        }
+      }
+    );
+  }
+);
+
+// Hard timeout fallback — some content blockers silently swallow scripts
+// without firing onerror, leaving the app stuck on the loader forever.
+setTimeout(function(){
+  if (!supabaseLoaded) {
+    supabaseLoaded = true;
+    state.loading=false;
+    state.initError='Supabase took too long to load. This is often caused by an ad-blocker or browser shield. Try disabling it for this site, or open in a different browser.';
+    render();
+  }
+}, 8000);
+</script>
+</body>
+</html>
